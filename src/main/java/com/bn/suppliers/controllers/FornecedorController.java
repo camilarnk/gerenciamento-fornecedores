@@ -34,15 +34,26 @@ public class FornecedorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<FornecedorModel>> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<FornecedorModel> buscarPorId(@PathVariable Long id) {
         Optional<FornecedorModel> request = fornecedorService.buscarPorId(id);
-        return ResponseEntity.ok().body(request);
+
+        if(request.isPresent()) {
+            return ResponseEntity.ok(request.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletarFornecedor(@PathVariable Long id) {
-        fornecedorService.deletarFornecedor(id);
-        return ResponseEntity.noContent().build();
+        Optional<FornecedorModel> request = fornecedorService.buscarPorId(id);
+
+        if(request.isPresent()) {
+            fornecedorService.deletarFornecedor(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
